@@ -1,17 +1,17 @@
 #!/bin/bash
   
-#PBS -P 
+#PBS -P  
 #PBS -N Somatic-shortV
-#PBS -l walltime=10:00:00
-#PBS -l ncpus=1
-#PBS -l mem=20GB
+#PBS -l walltime=02:00:00
+#PBS -l ncpus=
+#PBS -l mem=
 #PBS -W umask=022
 #PBS -q copyq
 #PBS -e Somatic-shortV-nf.e
 #PBS -o Somatic-shortV-nf.o
 #PBS -l wd
 #PBS -l storage=
-#PBS -l jobfs=10GB
+#PBS -l jobfs=
 
 # Load singularity and nextflow modules
 module load nextflow/22.04.3
@@ -26,6 +26,8 @@ ref=
 small_exac_common=
 intervalList_path=
 outDir=
+
+
 
 # Run the pipeline 
 nextflow run main.nf \

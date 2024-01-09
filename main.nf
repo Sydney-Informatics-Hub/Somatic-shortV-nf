@@ -2,6 +2,7 @@
 
 // Import subworkflows to be run in the workflow
 include { checkInputs                                } from './modules/checkCohort'
+include { createIntervalLists                        } from './modules/createIntervalLists'
 include { mutect2                                    } from './modules/mutect2'
 include { GatherVcfs                                 } from './modules/GatherVcfs'
 include { MergeMutectStats                           } from './modules/MergeMutectStats'
@@ -56,16 +57,17 @@ workDir           : ${workflow.workDir}
 
 def helpMessage() {
     log.info"""
-  Usage:   nextflow run main.nf --input samples.csv --ref reference.fasta  --intervalList_path path_to_intervals --ponvcf pon.vcf.gz
+  Usage:   nextflow run main.nf --input samples.csv --ref reference.fasta --ponvcf pon.vcf.gz
 
   Required Arguments:
-    --input		                      Full path and name of sample input file (csv format).
-	  --ref			                      Full path and name of reference genome (fasta format).
-    --intervalList_path             Full path to the folder containing the interval lists required for Mutect2 step
+    --input		                      Full path and name of sample input file (csv format)
+	  --ref			                      Full path and name of reference genome (fasta format)
     --ponvcf                        Full path and name of the Panel of Normals (ponvcf) file
 	
   Optional Arguments:
     --outDir                        Specify name of results directory. 
+    --dict                          Full path and name of reference genome dictionary file (contains metadata and sequence dictionary information)
+                                    The above dict file is required when the user chooses to create optimised number of intervals based on genome size
 
   HPC accounting arguments:
     --whoami                    HPC user name (Setonix or Gadi HPC)
@@ -80,12 +82,15 @@ workflow {
 // Show help message if --help is run or if any required params are not 
 // provided at runtime
 
-  if ( params.help == true || params.ref == false || params.input == false || params.ponvcf == false || params.small_exac_common == '' || params.intervalList_path == '')
+  if ( params.help == true || params.ref == false || params.input == false || params.ponvcf == false || params.small_exac_common == '' || (params.number_of_intervals == 0 && params.dict == false))
 	{   
-        // Invoke the help function above and exit
-        helpMessage()
-        exit 1
+
+          // Invoke the help function above and exit
+          helpMessage()
+          exit 1
+        
 	} 
+
 
 	else 
 	{
@@ -100,9 +105,16 @@ workflow {
 	
 
 	//Run the processes 
-	
-  // Run mutect2 on a Tumor/Normal sample-pair
-  mutect2(bam_pair_ch,params.intervalList,params.ponvcf,params.ponvcf+'.tbi')
+
+
+// Create an intervalList based on user specified number_of_intervals
+ createIntervalLists(params.number_of_intervals)
+
+
+ intervalList=createIntervalLists.out[2].tokenize(" ") 
+// Run mutect2 on a Tumor/Normal sample-pair
+ mutect2(bam_pair_ch,intervalList,params.ponvcf,params.ponvcf+'.tbi',createIntervalLists.out[0])
+
 
   // Gather multiple VCF files from a scatter operation into a single VCF file
 	GatherVcfs(mutect2.out[0].collect(),bam_pair_ch)

@@ -52,7 +52,7 @@ SAMPLE1,/data/Bams/sample1-N.bam,/data/Bams/sample1-T.bam
 SAMPLE2,/data/Bams/sample2-N.bam,/data/Bams/sample2-T.bam
 ``````
 
-When you run the pipeline, you will use the mandatory `--input` parameter to specify the location and name of the input file: 
+When you run the pipeline, you will use the mandatory `--input` parameter to specify the location and name of the input sample sheet file: 
 
 ```
 --input /path/to/samples.csv
@@ -73,26 +73,36 @@ This pipeline uses the following tools for generating specific index files.
   - [bwa](https://bio-bwa.sourceforge.net/bwa.shtml).amb, .ann, .bwt, .pac, .sa 
 
 
-***Note***: You must specify the full path for the reference fasta, even if it is in your working directory.
+***Note***:  
+You must specify the full path for the reference fasta, even if it is in your working directory.
 
 
-### 3. Download files
-#### Download the sub-interval files required for Mutect2 
-  - **Step 1**: Click on the [link](https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0;tab=objects?pli=1&prefix=&forceOnObjectsSortingFiltering=false&pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22)))
-  - **Step 2**: Click on [scattered_calling_intervals] and select all checkboxes and click `Download`. 
-  - **Step 3**: To download all the files, you will need to install the utility `gsutil`. Please follow the steps as shown below in a command-line window
-    - Download, unzip and install the excecutable  
-      - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-457.0.0-linux-x86_64.tar.gz
-      - tar -xf google-cloud-cli-457.0.0-linux-x86_64.tar.gz
-      - ./google-cloud-sdk/install.sh
-      - Close rhe current command-line window and re-open it. The utility `gsutil` will now be available in the path.
-  - **Step 4**:Go back to Step (2) and download the files as suggested.
+### 3. Required files
 
-#### A Panel of Normals (PoN) for Mutect2  
+#### **Create genomic-interval list files required for Mutect2**
+Interval lists define subsets of genomic regions in the genome. It is advisable to split the genome into genomic-intervals to parallelize execution and/or exclude regions that have bad or uninformative data. Please refer to this [link](https://gatk.broadinstitute.org/hc/en-us/articles/360035531852-Intervals-and-interval-lists) for more details. 
+
+Documented below are the two different methods by which you can generate the interval files for Mutect2 when you run the pipeline using the nextflow command.  
+**(a) Generate optimised number of intervals based on your genome size**
+  - Provide the [picard](https://gatk.broadinstitute.org/hc/en-us/articles/360037593331-CreateSequenceDictionary-Picard-).dict file in addition to the Reference FASTA file in the command.
+  - Please **do not** provide the `--number_of_intervals` value in the command.
+  - This generates minimum 100 Mb sized intervals e.g.  32 genomic-interval files for the Human genome hg38.
+
+**(b) Generate a specific number of intervals**  
+Alternatively, based on the computing resources available on the your operating system, you might want to generate a specific number of genomic-intervals.
+  - Please provide an integer value `--number_of_intervals` in the command. 
+  - You do not need to provide the [picard](https://gatk.broadinstitute.org/hc/en-us/articles/360037593331-CreateSequenceDictionary-Picard-).dict file for this option.
+
+
+#### Create a Panel of Normals (PoN) for Mutect2  
 The user can create a PoN file using our [pipeline](https://github.com/Sydney-Informatics-Hub/Somatic-ShortV?tab=readme-ov-file#4-create-pon-per-genomic-interval).
 
-#### Common biallelic variant resources for GetPileupSummaries 
+#### Create common biallelic variant resources for GetPileupSummaries 
 The user can create the Common biallelic variant resource files using our [pipeline](https://github.com/Sydney-Informatics-Hub/Somatic-ShortV?tab=readme-ov-file#0-optional-create-common-biallelic-variant-resources)
+
+
+
+
 
 ### 4. Clone this repository 
 
@@ -126,7 +136,7 @@ The important features are:
 The most basic run command for this pipeline is: 
 
 ```
-nextflow run main.nf --input samples.csv --ref reference.fasta  --intervalList_path path_to_intervals --ponvcf pon.vcf.gz
+nextflow run main.nf --input samples.csv --ref reference.fasta --ponvcf pon.vcf.gz
         
 ```
 **Note**: Please use the command provided in the script `scripts/run_pipeline_on_gadi_script.sh` on NCI Gadi HPC.
