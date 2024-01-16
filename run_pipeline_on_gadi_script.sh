@@ -19,19 +19,28 @@ module load singularity
 
 export NXF_SINGULARITY_CACHEDIR=/scratch/$PROJECT/$(whoami)/singularity
 
+#https://www.nextflow.io/blog/2021/5_tips_for_hpc_users.html
+export NFX_OPTS="-Xms=512m -Xmx=32g"
+
+
 # Fill in these variables for your run
-#samples=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/test_files_for_Georgie/samples.csv
-samples=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/test_files_for_Georgie/samples_full.csv
+samples=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/test_files_for_Georgie/samples.csv
+#samples=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/test_files_for_Georgie/samples_full.csv
 ponvcf=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/test_files_for_Georgie/pon.vcf.gz
-ref=/g/data/er01/SIH-HPC-WGS/Reference/hs38DH.fasta
+
+#ref=/g/data/er01/SIH-HPC-WGS/Reference/hs38DH.fasta
+#dict=/g/data/er01/SIH-HPC-WGS/Reference/hs38DH.dict
+
+ref=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/Somatic-shortV-nf/BKP_working_results/temp_ref_symlinks/hs38DH.fasta
+dict=/scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/Somatic-shortV-nf/BKP_working_results/temp_ref_symlinks/hs38DH.dict
+
 common_biallelic_variants=/g/data/er01/SIH-HPC-WGS/Reference/gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz
 outDir=results
-dict=/g/data/er01/SIH-HPC-WGS/Reference/hs38DH.dict
 #number_of_intervals=23
 
 
 # Run the pipeline 
-nextflow run main.nf \
+nextflow run main.nf -resume \
         --input ${samples} \
         -profile gadi \
         --whoami $(whoami) --gadi_account $PROJECT \

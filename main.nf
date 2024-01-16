@@ -11,7 +11,9 @@ include { GetPileupSummaries_T; GetPileupSummaries_N } from './modules/GetPileup
 include{  CalculateContamination                     } from './modules/CalculateContamination'
 include { FilterMutectCalls                          } from './modules/FilterMutectCalls'
 include { getFilteredVariants                        } from './modules/getFilteredVariants'
-   
+include {downloadAnnotationDbs                       } from './modules/downloadAnnotationDbs'
+include {annotateWithSnpEff                          } from './modules/annotateWithSnpEff'
+include {annotateWithSnpSift                         } from './modules/annotateWithSnpSift'   
 
 
 /// Print a header for your pipeline 
@@ -142,6 +144,21 @@ FilterMutectCalls(bam_pair_ch,MergeMutectStats.out[1].collect(),CalculateContami
 
 // Select the subset of filtered variants from the VCF file 
 getFilteredVariants(bam_pair_ch,FilterMutectCalls.out.collect(),params.ref)
+
+
+// Download and prepare Dbs associated with annotation of vcfs
+downloadAnnotationDbs(createIntervalLists.out[0])
+
+
+// Annotate with snpEff
+annotateWithSnpEff(bam_pair_ch,getFilteredVariants.out,downloadAnnotationDbs.out[0])
+
+// Annotate with SnpSift
+annotateWithSnpSift(bam_pair_ch,getFilteredVariants.out,downloadAnnotationDbs.out[1],downloadAnnotationDbs.out[2],annotateWithSnpEff.out)
+
+
+
+
 
 }}
 
