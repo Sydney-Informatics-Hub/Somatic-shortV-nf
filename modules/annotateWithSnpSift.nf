@@ -20,7 +20,9 @@ process annotateWithSnpSift {
 shell:
 
 '''
-java -jar /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/installtions/snpEff/SnpSift.jar annotate clinvar.vcf.gz !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf > !{bam_id}-T_!{bam_id}-N.filtered_only.ann_clinvar.vcf
+#java -jar /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/installtions/snpEff/SnpSift.jar annotate clinvar.vcf.gz !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf > !{bam_id}-T_!{bam_id}-N.filtered_only.ann_clinvar.vcf
+
+SnpSift annotate clinvar.vcf.gz !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf > !{bam_id}-T_!{bam_id}-N.filtered_only.ann_clinvar.vcf
 
 '''
 

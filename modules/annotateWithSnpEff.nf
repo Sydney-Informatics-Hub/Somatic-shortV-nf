@@ -24,7 +24,10 @@ shell:
 #snpEff download -dataDir /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/singularity_cache/ GRCh38.86
 #quay.io/biocontainers/snpeff:5.2--hdfd78af_0
 
-java -jar /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/installtions/snpEff/snpEff.jar  -v -o gatk -stats !{bam_id}-T_!{bam_id}-N.filtered_only.ann.html GRCh38.86 -dataDir /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/singularity_cache/ !{bam_id}-T_!{bam_id}-N.filtered_only.vcf.gz > !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf
+#java -jar /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/Somatic-shortV-nf_noEmit/Somatic-shortV-nf_start_2024_main/installtions/snpEff/snpEff.jar  -v -o gatk -stats !{bam_id}-T_!{bam_id}-N.filtered_only.ann.html GRCh38.86 -dataDir /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/singularity_cache/ !{bam_id}-T_!{bam_id}-N.filtered_only.vcf.gz > !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf
+
+snpEff  -v -o gatk -stats !{bam_id}-T_!{bam_id}-N.filtered_only.ann.html GRCh38.86 -dataDir /scratch/er01/ndes8648/pipeline_work/nextflow/INFRA-83-Somatic-ShortV/singularity_cache/ !{bam_id}-T_!{bam_id}-N.filtered_only.vcf.gz > !{bam_id}-T_!{bam_id}-N.filtered_only.ann.vcf
+
 '''
 
 }

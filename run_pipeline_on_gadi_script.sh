@@ -20,7 +20,7 @@ module load singularity
 export NXF_SINGULARITY_CACHEDIR=/scratch/$PROJECT/$(whoami)/singularity
 
 #https://www.nextflow.io/blog/2021/5_tips_for_hpc_users.html
-export NFX_OPTS="-Xms=512m -Xmx=32g"
+export NFX_OPTS="-Xms512m -Xmx32g"
 
 
 # Fill in these variables for your run
